@@ -1,0 +1,4 @@
+POST http://localhost:8888/.netlify/functions/crud HTTP/1.1
+content-type: application/json
+
+{"name": "aslam","phone": "09u5iFJ"}
