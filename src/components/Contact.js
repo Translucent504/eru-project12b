@@ -17,7 +17,7 @@ const Contact = ({ contactInfo, handleDelete }) => {
             Name: <input disabled={!editing} onChange={({target}) => setName(target.value)} value={name}/>
             Phone: <input disabled={!editing} onChange={({target}) => setPhone(target.value)} value={phone}/>
             <button onClick={() => handleEdit(name, phone)}>{editing? "Save" : "Edit"}</button>
-            <button onClick={() => handleDelete(name, phone)}>Delete</button>
+            <button onClick={() => handleDelete(name)}>Delete</button>
         </div>
     )
 }

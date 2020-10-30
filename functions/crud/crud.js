@@ -30,8 +30,12 @@ exports.handler = async event => {
         return { statusCode: 400, body: 'Bad request, should be of the form /.netlify/functions/crud' }
       case "DELETE":
         if (path.length === 4) {
-          deleteContact(JSON.parse(event.body))
-          return { statusCode: 200, body: 'Deleted' }
+          try {
+            deleteContact(event.body)
+            return { statusCode: 200, body: 'Deleted' }
+          } catch (error) {
+            return { statusCode: 400, body: 'Some Error Occurred' }
+          }
         }
         break;
       default:

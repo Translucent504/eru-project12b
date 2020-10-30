@@ -17,13 +17,15 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    setName('')
+    setPhone('')
     fetch('/.netlify/functions/crud', {
       method: "POST",
       body: JSON.stringify({
         name,
         phone
       })
-    }).then(v => console.log(v))
+    }).then(() => setContacts(contacts => contacts.concat({ name, phone })))
   }
 
   const updateContact = (oldContact, newContact) => {
@@ -31,9 +33,11 @@ function App() {
   }
 
   const deleteContact = (name) => {
-    
+    fetch('/.netlify/functions/crud', { method: "DELETE", body: name }).then(() => {
+      setContacts(contacts => contacts.filter(c => c.name !== name))
+    })
   }
-  
+
 
   return (
     <div className="App">
