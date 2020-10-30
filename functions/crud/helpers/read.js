@@ -14,5 +14,5 @@ module.exports = async function readAllContacts() {
             q.Lambda("X", q.Get(q.Var("X")))
         )
     )
-    return result.data.map(r => r.data)
+    return result.data
 }

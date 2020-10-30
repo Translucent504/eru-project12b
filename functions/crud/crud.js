@@ -2,6 +2,8 @@ require('dotenv').config()
 const createContact = require('./helpers/create')
 const deleteContact = require('./helpers/delete')
 const readAllContacts = require('./helpers/read')
+const updateContact = require('./helpers/update')
+
 // Docs on event and context https://www.netlify.com/docs/functions/#the-handler-method
 // event = {
 //   "path": "Path parameter",
@@ -24,20 +26,26 @@ exports.handler = async event => {
         return { statusCode: 400, body: 'Bad request, should be of the form /.netlify/functions/crud' }
       case "POST":
         if (path.length === 4) {
-          createContact(JSON.parse(event.body))
+          await createContact(JSON.parse(event.body))
           return { statusCode: 200, body: "created" }
         }
         return { statusCode: 400, body: 'Bad request, should be of the form /.netlify/functions/crud' }
       case "DELETE":
         if (path.length === 4) {
           try {
-            deleteContact(event.body)
+            await deleteContact(event.body)
             return { statusCode: 200, body: 'Deleted' }
           } catch (error) {
             return { statusCode: 400, body: 'Some Error Occurred' }
           }
         }
-        break;
+        return { statusCode: 400, body: 'Bad request, should be of the form /.netlify/functions/crud' }
+      case "PUT":
+        if (path.length === 4) {
+          await updateContact(JSON.parse(event.body))
+          return { statusCode: 200, body: 'Updated' }
+        }
+        return { statusCode: 400, body: 'Bad request, should be of the form /.netlify/functions/crud' }
       default:
         break;
     }

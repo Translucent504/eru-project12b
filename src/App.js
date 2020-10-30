@@ -7,13 +7,17 @@ function App() {
   const [phone, setPhone] = useState('')
   const [contacts, setContacts] = useState([])
 
+  const refreshContacts = async () => {
+    const result = await fetch('/.netlify/functions/crud', { method: "GET" })
+    const t2 = await result.json()
+    setContacts(t2)
+  }
+
   useEffect(() => {
-    (async () => {
-      const result = await fetch('/.netlify/functions/crud', { method: "GET" })
-      const t2 = await result.json()
-      setContacts(t2)
-    })()
+    refreshContacts()
   }, [])
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -25,16 +29,23 @@ function App() {
         name,
         phone
       })
-    }).then(() => setContacts(contacts => contacts.concat({ name, phone })))
+    }).then(() => refreshContacts())
   }
 
-  const updateContact = (oldContact, newContact) => {
-
+  const updateContact = (contactId, newContact) => {
+    fetch('/.netlify/functions/crud', {
+      method: "PUT", body: JSON.stringify({
+        id: contactId,
+        data: {
+          ...newContact
+        }
+      })
+    })
   }
 
-  const deleteContact = (name) => {
-    fetch('/.netlify/functions/crud', { method: "DELETE", body: name }).then(() => {
-      setContacts(contacts => contacts.filter(c => c.name !== name))
+  const deleteContact = (contactId) => {
+    fetch('/.netlify/functions/crud', { method: "DELETE", body: contactId }).then(() => {
+      setContacts(contacts => contacts.filter(c => c.ref['@ref'].id !== contactId))
     })
   }
 
@@ -51,7 +62,7 @@ function App() {
       {contacts.map(c => (
         <Contact
           contactInfo={c}
-          key={c.name + c.phone}
+          key={c.ref['@ref'].id}
           handleEdit={updateContact}
           handleDelete={deleteContact} />
       ))}
