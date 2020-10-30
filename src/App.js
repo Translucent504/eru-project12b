@@ -1,23 +1,57 @@
-import logo from './logo.svg';
 import './App.css';
+import { useEffect, useState } from 'react'
+import Contact from './components/Contact';
 
 function App() {
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [contacts, setContacts] = useState([])
+
+  useEffect(() => {
+    (async () => {
+      const result = await fetch('/.netlify/functions/crud', { method: "GET" })
+      const t2 = await result.json()
+      setContacts(t2)
+    })()
+  }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    fetch('/.netlify/functions/crud', {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        phone
+      })
+    }).then(v => console.log(v))
+  }
+
+  const updateContact = (oldContact, newContact) => {
+
+  }
+
+  const deleteContact = (name) => {
+    
+  }
+  
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="name">Name:</label>
+        <input value={name} onChange={({ target }) => setName(target.value)} type="text" id="name" />
+        <label htmlFor="phone">Phone:</label>
+        <input value={phone} onChange={({ target }) => setPhone(target.value)} type="text" id="phone" />
+        <button type="submit">Create</button>
+      </form>
+      {contacts.map(c => (
+        <Contact
+          contactInfo={c}
+          key={c.name + c.phone}
+          handleEdit={updateContact}
+          handleDelete={deleteContact} />
+      ))}
+
     </div>
   );
 }
